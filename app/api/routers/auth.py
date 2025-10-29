@@ -22,7 +22,7 @@ from app.usecases.auth_usecases import (
     LoginUseCase,
 )
 
-router = APIRouter(prefix="/api/v1/auth", tags=["Authentication"])
+router = APIRouter()
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
