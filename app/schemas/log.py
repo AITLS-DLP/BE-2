@@ -2,7 +2,6 @@
 로그 스키마 정의 (IP 기반)
 """
 from datetime import datetime
-from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -44,9 +43,9 @@ class LogQueryParams(BaseModel):
     """로그 조회 쿼리 파라미터"""
     start_date: datetime
     end_date: datetime
-    client_ip: Optional[str] = None
-    has_pii: Optional[bool] = None
-    entity_type: Optional[str] = None
+    client_ip: str | None = None
+    has_pii: bool | None = None
+    entity_type: str | None = None
     page: int = Field(default=1, ge=1)
     page_size: int = Field(default=20, ge=1, le=100)
     sort: str = "timestamp:desc"
@@ -106,7 +105,7 @@ class IPStatistics(BaseModel):
     total_requests: int
     detected_requests: int
     detection_rate: float
-    most_detected_type: Optional[str] = None
+    most_detected_type: str | None = None
 
 
 class IPStatisticsResponse(BaseModel):

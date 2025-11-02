@@ -2,7 +2,6 @@
 관리자 대시보드 API (JWT 인증 필수)
 """
 from datetime import datetime
-from typing import Optional
 from fastapi import APIRouter, Depends, Query, HTTPException, status
 from app.models.user import User
 from app.core.dependencies import get_current_user
@@ -29,9 +28,9 @@ log_service = PIILogService()
 async def get_logs(
     start_date: datetime = Query(..., description="시작 날짜 (ISO 8601)"),
     end_date: datetime = Query(..., description="종료 날짜 (ISO 8601)"),
-    client_ip: Optional[str] = Query(None, description="클라이언트 IP 주소 필터"),
-    has_pii: Optional[bool] = Query(None, description="PII 탐지 여부 필터 (true/false)"),
-    entity_type: Optional[str] = Query(None, description="PII 타입 필터 (PERSON, PHONE_NUM 등)"),
+    client_ip: str | None = Query(None, description="클라이언트 IP 주소 필터"),
+    has_pii: bool | None = Query(None, description="PII 탐지 여부 필터 (true/false)"),
+    entity_type: str | None = Query(None, description="PII 타입 필터 (PERSON, PHONE_NUM 등)"),
     page: int = Query(1, ge=1, description="페이지 번호"),
     page_size: int = Query(20, ge=1, le=100, description="페이지 크기 (1-100)"),
     sort: str = Query("timestamp:desc", description="정렬 (field:asc 또는 field:desc)"),

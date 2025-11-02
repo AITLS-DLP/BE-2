@@ -1,12 +1,11 @@
 from functools import lru_cache
-from typing import Optional
 import logging
 from .pii_detector import RobertaKoreanPIIDetector
 
 logger = logging.getLogger(__name__)
 
 # 전역 모델 인스턴스 저장소
-_pii_detector_instance: Optional[RobertaKoreanPIIDetector] = None
+_pii_detector_instance: RobertaKoreanPIIDetector | None = None
 
 @lru_cache(maxsize=1)
 def get_pii_detector() -> RobertaKoreanPIIDetector:

@@ -2,7 +2,6 @@
 Elasticsearch 저장소 레이어
 """
 from datetime import datetime, timedelta
-from typing import Optional
 from elasticsearch import AsyncElasticsearch, NotFoundError
 from app.core.config import settings
 import logging
@@ -148,9 +147,9 @@ class ElasticsearchRepository:
         self,
         start_date: datetime,
         end_date: datetime,
-        client_ip: Optional[str] = None,
-        has_pii: Optional[bool] = None,
-        entity_type: Optional[str] = None,
+        client_ip: str | None = None,
+        has_pii: bool | None = None,
+        entity_type: str | None = None,
         page: int = 1,
         page_size: int = 20,
         sort: str = "timestamp:desc"
