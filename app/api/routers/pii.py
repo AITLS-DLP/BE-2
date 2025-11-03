@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Request, BackgroundTasks
+from fastapi import APIRouter, HTTPException, status, Request
 from fastapi.responses import JSONResponse
 from app.schemas.pii import PIIDetectionRequest, PIIDetectionResponse
 from app.services.pii_service import PIIDetectionService
@@ -23,8 +23,7 @@ log_service = PIILogService()
              status_code=status.HTTP_200_OK)
 async def detect_pii(
     pii_request: PIIDetectionRequest,
-    request: Request,
-    background_tasks: BackgroundTasks
+    request: Request
 ) -> PIIDetectionResponse:
     """
     텍스트에서 개인정보 탐지 API (프록시용, 인증 불필요)
@@ -62,14 +61,17 @@ async def detect_pii(
             f"entities: {len(result.entities)}, response_time: {response_time_ms:.2f}ms"
         )
 
-        # 백그라운드에서 로그 저장 (응답 속도에 영향 없음)
-        background_tasks.add_task(
-            log_service.log_detection,
-            client_ip=client_ip,
-            original_text=text,
-            result=result,
-            response_time_ms=response_time_ms
-        )
+        # 로그 저장 (비동기, 빠름)
+        try:
+            await log_service.log_detection(
+                client_ip=client_ip,
+                original_text=text,
+                result=result,
+                response_time_ms=response_time_ms
+            )
+        except Exception as log_error:
+            # 로깅 실패해도 메인 요청은 성공 처리
+            logger.warning(f"Failed to log detection result: {str(log_error)}")
 
         return result
 

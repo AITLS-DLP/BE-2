@@ -2,7 +2,6 @@
 PII 검사 로그 서비스
 """
 from datetime import datetime
-from typing import Optional
 import logging
 
 from app.schemas.pii import PIIDetectionResponse
@@ -76,9 +75,9 @@ class PIILogService:
         self,
         start_date: datetime,
         end_date: datetime,
-        client_ip: Optional[str] = None,
-        has_pii: Optional[bool] = None,
-        entity_type: Optional[str] = None,
+        client_ip: str | None = None,
+        has_pii: bool | None = None,
+        entity_type: str | None = None,
         page: int = 1,
         page_size: int = 20,
         sort: str = "timestamp:desc"

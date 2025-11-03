@@ -1,12 +1,12 @@
-from typing import List, Dict, Any, Optional
+from typing import Any
 import re
 from transformers import AutoTokenizer
 
 def extract_bio_entities(
-    predictions: List[Dict[str, Any]], 
-    tokenizer: Optional[AutoTokenizer] = None,
+    predictions: list[dict[str, Any]],
+    tokenizer: AutoTokenizer | None = None,
     original_text: str = ""
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """
     BIO 태그 예측 결과에서 엔티티를 추출
     
@@ -99,8 +99,8 @@ def extract_bio_entities(
     
     return entities
 
-def _is_consecutive_tokens(current_entity: Dict[str, Any], pred: Dict[str, Any], 
-                          predictions: List[Dict[str, Any]], current_idx: int) -> bool:
+def _is_consecutive_tokens(current_entity: dict[str, Any], pred: dict[str, Any],
+                          predictions: list[dict[str, Any]], current_idx: int) -> bool:
     """
     현재 토큰이 기존 엔티티와 연속된 토큰인지 확인
     단순히 위치 인덱스가 연속되는지만 확인
@@ -114,17 +114,17 @@ def _is_consecutive_tokens(current_entity: Dict[str, Any], pred: Dict[str, Any],
     # 위치가 연속되는지 확인 (1 차이)
     return current_position == last_position + 1
 
-def _finalize_entity(entity: Dict[str, Any], tokenizer: Optional[AutoTokenizer] = None) -> Dict[str, Any]:
+def _finalize_entity(entity: dict[str, Any], tokenizer: AutoTokenizer | None = None) -> dict[str, Any]:
     """엔티티 정보 완성"""
     tokens = entity["tokens"]
     entity_type = entity["type"]
-    
+
     # 토큰들을 문자열로 변환
     value = _clean_token_value(tokens, tokenizer, entity_type)
-    
+
     # 평균 신뢰도 계산
     avg_confidence = sum(entity["confidences"]) / len(entity["confidences"])
-    
+
     return {
         "type": entity_type,
         "value": value,
@@ -132,7 +132,7 @@ def _finalize_entity(entity: Dict[str, Any], tokenizer: Optional[AutoTokenizer] 
         "token_count": len(tokens)
     }
 
-def _clean_token_value(tokens: List[str], tokenizer: Optional[AutoTokenizer] = None, entity_type: str = "") -> str:
+def _clean_token_value(tokens: list[str], tokenizer: AutoTokenizer | None = None, entity_type: str = "") -> str:
     """
     토큰들을 깔끔한 문자열로 변환
     
@@ -202,15 +202,15 @@ def _post_process_by_type(value: str, entity_type: str) -> str:
     return value
 
 # 역호환성을 위한 함수들
-def has_pii_entities(entities: List[Dict[str, Any]]) -> bool:
+def has_pii_entities(entities: list[dict[str, Any]]) -> bool:
     """PII 엔티티가 존재하는지 확인"""
     return len(entities) > 0
 
-def get_entity_types(entities: List[Dict[str, Any]]) -> List[str]:
+def get_entity_types(entities: list[dict[str, Any]]) -> list[str]:
     """탐지된 엔티티 타입들 반환"""
     return list(set(entity["type"] for entity in entities))
 
-def get_entity_count_by_type(entities: List[Dict[str, Any]]) -> Dict[str, int]:
+def get_entity_count_by_type(entities: list[dict[str, Any]]) -> dict[str, int]:
     """타입별 엔티티 개수 반환"""
     count_dict = {}
     for entity in entities:
